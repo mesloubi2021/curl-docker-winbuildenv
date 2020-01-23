@@ -1,0 +1,49 @@
+# escape=`
+
+ARG BASE_IMG=base
+ARG BASE_TAG=ltsc2019
+
+FROM ${BASE_IMG}:${BASE_TAG}
+
+ARG MSYS2_X86_64="https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.tar.xz"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:MSYS2_X86_64 -OutFile "C:\Windows\Temp\msys2-x86_64.tar.xz"; `
+    Start-Process -FilePath "C:\Program` Files\7-Zip\7z.exe" -ArgumentList e, "C:\Windows\Temp\msys2-x86_64.tar.xz", `-oC:\Windows\Temp\ -NoNewWindow -PassThru -Wait; `
+    Start-Process -FilePath "C:\Program` Files\7-Zip\7z.exe" -ArgumentList x, "C:\Windows\Temp\msys2-x86_64.tar", `-oC:\ -NoNewWindow -PassThru -Wait; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse;
+
+RUN Write-Host 'Updating MSYSTEM and MSYSCON ...'; `
+    [Environment]::SetEnvironmentVariable('MSYSTEM', 'MSYS2', [EnvironmentVariableTarget]::Machine); `
+    [Environment]::SetEnvironmentVariable('MSYSCON', 'defterm', [EnvironmentVariableTarget]::Machine);
+
+RUN C:\msys64\usr\bin\bash.exe -l -c 'echo "First run to setup MSYS2 environment ..."'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
+    Get-Process | Where-Object {$_.Path -Like 'C:\msys64\*'} | Stop-Process -Force -PassThru | Wait-Process; `
+    Get-Process @('bash', 'dirmngr', 'gpg-agent', 'pacman') -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | Wait-Process; `
+    Remove-Item @('C:\$Recycle.Bin\*') -Force -Recurse -ErrorAction SilentlyContinue; `
+    Write-Host 'Cleared Recycle Bin ...';
+
+RUN C:\msys64\usr\bin\bash.exe -l -c 'echo "Now updating MSYS2..."'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syuu --needed --noconfirm --noprogressbar'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Syu  --needed --noconfirm --noprogressbar'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Su   --needed --noconfirm --noprogressbar'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Scc --noconfirm'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully installed MSYS2"'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'rm -rf /usr/share/doc /usr/share/man'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
+    Get-Process | Where-Object {$_.Path -Like 'C:\msys64\*'} | Stop-Process -Force -PassThru | Wait-Process; `
+    Get-Process @('bash', 'dirmngr', 'gpg-agent', 'pacman') -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | Wait-Process; `
+    Remove-Item @('C:\$Recycle.Bin\*') -Force -Recurse -ErrorAction SilentlyContinue; `
+    Write-Host 'Cleared Recycle Bin ...';
+
+RUN C:\msys64\usr\bin\bash.exe -l -c 'echo "Now installing build tools..."'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -S --needed --noconfirm --noprogressbar automake autoconf make intltool libtool zip unzip'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Scc --noconfirm'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'rm -rf /usr/share/doc /usr/share/man'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully installed build tools"'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
+    Get-Process | Where-Object {$_.Path -Like 'C:\msys64\*'} | Stop-Process -Force -PassThru | Wait-Process; `
+    Get-Process @('bash', 'dirmngr', 'gpg-agent', 'pacman') -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | Wait-Process; `
+    Remove-Item @('C:\$Recycle.Bin\*') -Force -Recurse -ErrorAction SilentlyContinue; `
+    Write-Host 'Cleared Recycle Bin ...';

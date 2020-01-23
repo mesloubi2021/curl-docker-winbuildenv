@@ -1,0 +1,41 @@
+# escape=`
+
+ARG BASE_IMG=mcr.microsoft.com/windows/servercore
+ARG BASE_TAG=ltsc2019
+
+FROM ${BASE_IMG}:${BASE_TAG}
+
+SHELL ["powershell", "-command"]
+
+ARG P7Z_X64="https://www.7-zip.org/a/7z1900-x64.exe"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:P7Z_X64 -OutFile "C:\Windows\Temp\7z-x64.exe"; `
+    Start-Process -FilePath "C:\Windows\Temp\7z-x64.exe" -ArgumentList /S -NoNewWindow -PassThru -Wait; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse;
+
+ARG STUNNEL_WIN64="https://www.usenix.org.uk/mirrors/stunnel/stunnel-5.56-win64-installer.exe"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:STUNNEL_WIN64 -OutFile "C:\Windows\Temp\stunnel-win64-installer.exe"; `
+    Start-Process -FilePath "C:\Windows\Temp\stunnel-win64-installer.exe" -ArgumentList /S -NoNewWindow -PassThru -Wait; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking install ...'; `
+    Get-Item -Path 'C:\Program Files (x86)\stunnel\bin';
+
+RUN Write-Host 'Updating PATH ...'; `
+    $env:PATH = 'C:\Program Files (x86)\stunnel\bin;' + $env:PATH; `
+    [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);
+
+ARG OPENSSH_WIN64="https://github.com/PowerShell/Win32-OpenSSH/releases/download/v8.1.0.0p1-Beta/OpenSSH-Win64.zip"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:OPENSSH_WIN64 -OutFile "C:\Windows\Temp\OpenSSH-Win64.zip"; `
+    Expand-Archive -LiteralPath "C:\Windows\Temp\OpenSSH-Win64.zip" -DestinationPath "C:\OpenSSH" -Force; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking install ...'; `
+    Get-Item -Path 'C:\OpenSSH\OpenSSH-Win64';
+
+RUN Write-Host 'Updating PATH ...'; `
+    $env:PATH = 'C:\OpenSSH\OpenSSH-Win64;' + $env:PATH; `
+    [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);

@@ -1,0 +1,96 @@
+variables:
+  REP: '$(Build.Repository.Name)-' # TODO: '$(Build.Repository.Name)/'
+  IMG: '$(Build.Repository.Name)-' # TODO: 'docker.pkg.github.com/$(Build.Repository.Name)/'
+  TAG: 'ltsc2019'
+
+jobs:
+  - job: base
+    timeoutInMinutes: 30
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build base
+      inputs:
+        command: build
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)base'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.base'
+        arguments: '--build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push base
+      inputs:
+        command: push
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)base'
+        tags: '$(TAG)'
+
+  - job: msys2
+    dependsOn: base
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build msys2
+      inputs:
+        command: build
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.msys2'
+        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push msys2
+      inputs:
+        command: push
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2'
+        tags: '$(TAG)'
+
+  - job: msys2_mingw32
+    dependsOn: msys2
+    timeoutInMinutes: 90
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build msys2-mingw32
+      inputs:
+        command: build
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2-mingw32'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.msys2-mingw32'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push msys2-mingw32
+      inputs:
+        command: push
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2-mingw32'
+        tags: '$(TAG)'
+
+  - job: msys2_mingw64
+    dependsOn: msys2
+    timeoutInMinutes: 90
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build msys2-mingw64
+      inputs:
+        command: build
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2-mingw64'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.msys2-mingw64'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push msys2-mingw64
+      inputs:
+        command: push
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)msys2-mingw64'
+        tags: '$(TAG)'

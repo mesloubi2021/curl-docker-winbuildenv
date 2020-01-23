@@ -1,0 +1,18 @@
+# escape=`
+
+ARG BASE_IMG=msys2
+ARG BASE_TAG=ltsc2019
+
+FROM ${BASE_IMG}:${BASE_TAG}
+
+RUN C:\msys64\usr\bin\bash.exe -l -c 'echo "Now installing MinGW-w64 64-bit..."'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -S --needed --noconfirm --noprogressbar mingw-w64-x86_64-toolchain'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'pacman -Scc --noconfirm'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'rm -rf /mingw64/lib/python3.8/test'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'rm -rf /usr/share/doc /usr/share/man'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully installed MinGW-w64 64-bit"'; `
+    C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
+    Get-Process | Where-Object {$_.Path -Like 'C:\msys64\*'} | Stop-Process -Force -PassThru | Wait-Process; `
+    Get-Process @('bash', 'dirmngr', 'gpg-agent', 'pacman') -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | Wait-Process; `
+    Remove-Item @('C:\$Recycle.Bin\*') -Force -Recurse -ErrorAction SilentlyContinue; `
+    Write-Host 'Cleared Recycle Bin ...';
