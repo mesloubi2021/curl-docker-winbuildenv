@@ -118,3 +118,49 @@ jobs:
         containerRegistry: '$(REG)'
         repository: '$(REP)mingw'
         tags: '$(TAG)'
+
+  - job: msys1_mingw32
+    dependsOn: mingw
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build msys1-mingw32
+      inputs:
+        command: build
+        containerRegistry: '$(REG)'
+        repository: '$(REP)msys1-mingw32'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.msys1-mingw32'
+        arguments: '--build-arg BASE_IMG=$(IMG)mingw --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push msys1-mingw32
+      inputs:
+        command: push
+        containerRegistry: '$(REG)'
+        repository: '$(REP)msys1-mingw32'
+        tags: '$(TAG)'
+
+  - job: msys1_mingw64
+    dependsOn: mingw
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build msys1-mingw64
+      inputs:
+        command: build
+        containerRegistry: '$(REG)'
+        repository: '$(REP)msys1-mingw64'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.msys1-mingw64'
+        arguments: '--build-arg BASE_IMG=$(IMG)mingw --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push msys1-mingw64
+      inputs:
+        command: push
+        containerRegistry: '$(REG)'
+        repository: '$(REP)msys1-mingw64'
+        tags: '$(TAG)'

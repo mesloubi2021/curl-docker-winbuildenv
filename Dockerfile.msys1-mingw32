@@ -1,0 +1,21 @@
+# escape=`
+
+ARG BASE_IMG=mingw
+ARG BASE_TAG=ltsc2019
+
+FROM ${BASE_IMG}:${BASE_TAG}
+
+ARG MINGW_W64_X86="https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-win32/sjlj/i686-8.1.0-release-win32-sjlj-rt_v6-rev0.7z"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:MINGW_W64_X86 -UserAgent "curl/7.20.19" -OutFile "C:\Windows\Temp\mingw-w64-x86.7z"; `
+    Start-Process -FilePath "C:\Program` Files\7-Zip\7z.exe" -ArgumentList x, "C:\Windows\Temp\mingw-w64-x86.7z", `-oC:\MinGW\mingw-w64 -NoNewWindow -PassThru -Wait; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking extract ...'; `
+    Get-Item -Path 'C:\MinGW\mingw-w64\mingw32';
+
+RUN C:\MinGW\msys\1.0\bin\sh -l -c 'echo "Now configuring MinGW-w64 32-bit..."'; `
+    Add-Content -Path 'C:\MinGW\msys\1.0\etc\fstab' -Value 'C:/MinGW/mingw-w64/mingw32 /mingw32'; `
+    Add-Content -Path 'C:\MinGW\msys\1.0\home\ContainerAdministrator\.profile' -Value 'export PATH="/mingw32/bin:$PATH"'; `
+    Add-Content -Path 'C:\MinGW\msys\1.0\home\ContainerAdministrator\.profile' -Value 'export C_INCLUDE_PATH="/mingw32/include:/mingw32/i686-w64-mingw32/include"'; `
+    Add-Content -Path 'C:\MinGW\msys\1.0\home\ContainerAdministrator\.profile' -Value 'export LD_LIBRARY_PATH="/mingw32/lib:/mingw32/i686-w64-mingw32/lib"';
