@@ -94,3 +94,26 @@ jobs:
         containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
         repository: '$(REP)msys2-mingw64'
         tags: '$(TAG)'
+
+  - job: mingw
+    dependsOn: base
+    timeoutInMinutes: 60
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: Docker@2
+      displayName: build mingw
+      inputs:
+        command: build
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)mingw'
+        tags: '$(TAG)'
+        Dockerfile: 'Dockerfile.mingw'
+        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG)'
+    - task: Docker@2
+      displayName: push mingw
+      inputs:
+        command: push
+        containerRegistry: 'Docker Hub' # TODO: 'GitHub Packages'
+        repository: '$(REP)mingw'
+        tags: '$(TAG)'
