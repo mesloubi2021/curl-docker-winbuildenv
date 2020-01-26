@@ -1,6 +1,6 @@
 # escape=`
 
-ARG BASE_IMG=mingw
+ARG BASE_IMG=msys1-mingw
 ARG BASE_TAG=ltsc2019
 
 FROM ${BASE_IMG}:${BASE_TAG}
