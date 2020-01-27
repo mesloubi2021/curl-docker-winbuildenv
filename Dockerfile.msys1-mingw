@@ -17,3 +17,5 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 RUN C:\MinGW\bin\mingw-get.exe update; `
     C:\MinGW\bin\mingw-get.exe install msys-base msys-zip gcc g++ libtool; `
     C:\MinGW\bin\mingw-get.exe install mingw32-make mingw32-libz mingw32-zlib;
+
+ADD .autom4te.cfg C:/MinGW/msys/1.0/home/ContainerAdministrator/.autom4te.cfg
