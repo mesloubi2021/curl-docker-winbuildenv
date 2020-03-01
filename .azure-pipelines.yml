@@ -2,7 +2,7 @@ variables:
   REG: 'Docker Hub' # TODO: 'GitHub Packages'
   REP: '$(Build.Repository.Name)-' # TODO: '$(Build.Repository.Name)/'
   IMG: '$(Build.Repository.Name)-' # TODO: 'docker.pkg.github.com/$(Build.Repository.Name)/'
-  TAG: 'ltsc2019'
+  TAG: '10.0.17763.973'
 
 jobs:
   - job: base
@@ -10,6 +10,8 @@ jobs:
     pool:
       vmImage: 'windows-2019'
     steps:
+    - script: ver
+      displayName: print host version
     - task: Docker@2
       displayName: build base
       inputs:
