@@ -18,4 +18,13 @@ RUN C:\MinGW\bin\mingw-get.exe update; `
     C:\MinGW\bin\mingw-get.exe install msys-base msys-zip gcc g++ libtool; `
     C:\MinGW\bin\mingw-get.exe install mingw32-make mingw32-libz mingw32-zlib;
 
+ARG CURL_FOR_WIN="https://curl.haxx.se/windows/dl-7.68.0/curl-7.68.0-win64-mingw.zip"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:CURL_FOR_WIN -OutFile "C:\Windows\Temp\curl-win64-mingw.zip"; `
+    Start-Process -FilePath "C:\Program` Files\7-Zip\7z.exe" -ArgumentList e, "C:\Windows\Temp\curl-win64-mingw.zip", `-oC:\MinGW\msys\1.0\bin, */bin -NoNewWindow -PassThru -Wait; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking extract ...'; `
+    Get-Item -Path 'C:\MinGW\msys\1.0\bin\curl.exe';
+
 ADD .autom4te.cfg C:/MinGW/msys/1.0/home/ContainerAdministrator/.autom4te.cfg
