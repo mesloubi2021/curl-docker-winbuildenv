@@ -1,8 +1,8 @@
 variables:
-  REG: 'Docker Hub' # TODO: 'GitHub Packages'
-  REP: '$(Build.Repository.Name)-' # TODO: '$(Build.Repository.Name)/'
-  IMG: '$(Build.Repository.Name)-' # TODO: 'docker.pkg.github.com/$(Build.Repository.Name)/'
-  TAG: 'ltsc2019' # NOTE: '10.0.17763.1039'
+  REG: 'GitHub Packages'
+  REP: '$(Build.Repository.Name)/'
+  IMG: 'docker.pkg.github.com/$(Build.Repository.Name)/'
+  TAG: 'ltsc2019'
 
 jobs:
   - job: base
