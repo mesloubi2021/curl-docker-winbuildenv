@@ -16,3 +16,7 @@ RUN C:\msys64\usr\bin\bash.exe -l -c 'echo "Now installing MinGW-w64 64-bit..."'
     Get-Process @('bash', 'dirmngr', 'gpg-agent', 'pacman') -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | Wait-Process; `
     Remove-Item @('C:\$Recycle.Bin\*') -Force -Recurse -ErrorAction SilentlyContinue; `
     Write-Host 'Cleared Recycle Bin ...';
+
+RUN Write-Host 'Updating MSYSTEM and MSYS2_PATH_TYPE ...'; `
+    [Environment]::SetEnvironmentVariable('MSYSTEM', 'MINGW64', [EnvironmentVariableTarget]::Machine); `
+    [Environment]::SetEnvironmentVariable('MSYS2_PATH_TYPE', 'inherit', [EnvironmentVariableTarget]::Machine);
