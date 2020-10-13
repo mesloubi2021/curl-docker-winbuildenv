@@ -16,7 +16,9 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 
 RUN C:\MinGW\bin\mingw-get.exe update; `
     C:\MinGW\bin\mingw-get.exe install msys-base msys-zip gcc g++ libtool; `
-    C:\MinGW\bin\mingw-get.exe install mingw32-make mingw32-libz mingw32-zlib;
+    C:\MinGW\bin\mingw-get.exe install mingw32-make mingw32-libz mingw32-zlib; `
+    Write-Host 'Checking install ...'; `
+    Get-Item -Path 'C:\MinGW\bin\mingw32-make.exe';
 
 RUN Copy-Item -Path 'C:\Windows\System32\curl.exe' -Destination 'C:\MinGW\msys\1.0\bin\curl.exe'
 
