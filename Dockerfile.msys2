@@ -5,7 +5,7 @@ ARG BASE_TAG=ltsc2019
 
 FROM ${BASE_IMG}:${BASE_TAG}
 
-ARG MSYS2_X86_64="https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.tar.xz"
+ARG MSYS2_X86_64="https://github.com/msys2/msys2-installer/releases/download/2020-09-03/msys2-base-x86_64-20200903.tar.xz"
 
 RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
     Invoke-WebRequest $env:MSYS2_X86_64 -OutFile "C:\Windows\Temp\msys2-x86_64.tar.xz"; `
