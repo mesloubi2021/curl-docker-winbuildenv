@@ -14,7 +14,7 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
     Start-Process -FilePath "C:\Windows\Temp\7z-x64.exe" -ArgumentList /S -NoNewWindow -PassThru -Wait; `
     Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse;
 
-ARG STUNNEL_WIN64="https://www.usenix.org.uk/mirrors/stunnel/stunnel-5.56-win64-installer.exe"
+ARG STUNNEL_WIN64="https://www.usenix.org.uk/mirrors/stunnel/archive/5.x/stunnel-5.57-win64-installer.exe"
 
 RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
     Invoke-WebRequest $env:STUNNEL_WIN64 -OutFile "C:\Windows\Temp\stunnel-win64-installer.exe"; `
