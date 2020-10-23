@@ -39,3 +39,16 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 RUN Write-Host 'Updating PATH ...'; `
     $env:PATH = 'C:\OpenSSH\OpenSSH-Win64;' + $env:PATH; `
     [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);
+
+ARG SYSINTERNALS_HANDLE="https://download.sysinternals.com/files/Handle.zip"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:SYSINTERNALS_HANDLE -OutFile "C:\Windows\Temp\Sysinternals-Handle.zip"; `
+    Expand-Archive -LiteralPath "C:\Windows\Temp\Sysinternals-Handle.zip" -DestinationPath "C:\Sysinternals-Handle" -Force; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking install ...'; `
+    Get-Item -Path 'C:\Sysinternals-Handle\handle.exe';
+
+RUN Write-Host 'Updating PATH ...'; `
+    $env:PATH = 'C:\Sysinternals-Handle;' + $env:PATH; `
+    [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);
