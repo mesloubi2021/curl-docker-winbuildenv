@@ -1,7 +1,7 @@
 variables:
-  REG: 'GitHub Packages'
+  REG: 'GitHub Container Registry'
   REP: '$(Build.Repository.Name)/'
-  IMG: 'docker.pkg.github.com/$(Build.Repository.Name)/'
+  IMG: 'ghcr.io/$(Build.Repository.Name)/'
   TAG: 'ltsc2019'
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
         repository: '$(REP)base'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.base'
-        arguments: '--build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push base
       inputs:
@@ -43,7 +43,7 @@ jobs:
         repository: '$(REP)msys2'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys2'
-        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys2
       inputs:
@@ -66,7 +66,7 @@ jobs:
         repository: '$(REP)msys2-mingw32'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys2-mingw32'
-        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys2-mingw32
       inputs:
@@ -89,7 +89,7 @@ jobs:
         repository: '$(REP)msys2-mingw64'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys2-mingw64'
-        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys2 --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys2-mingw64
       inputs:
@@ -112,7 +112,7 @@ jobs:
         repository: '$(REP)msys1-mingw'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys1-mingw'
-        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)base --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys1-mingw
       inputs:
@@ -135,7 +135,7 @@ jobs:
         repository: '$(REP)msys1-mingw32'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys1-mingw32'
-        arguments: '--build-arg BASE_IMG=$(IMG)msys1-mingw --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys1-mingw --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys1-mingw32
       inputs:
@@ -158,7 +158,7 @@ jobs:
         repository: '$(REP)msys1-mingw64'
         tags: '$(TAG)'
         Dockerfile: 'Dockerfile.msys1-mingw64'
-        arguments: '--build-arg BASE_IMG=$(IMG)msys1-mingw --build-arg BASE_TAG=$(TAG)'
+        arguments: '--build-arg BASE_IMG=$(IMG)msys1-mingw --build-arg BASE_TAG=$(TAG) --label org.opencontainers.image.source=https://github.com/$(Build.Repository.Name)'
     - task: Docker@2
       displayName: push msys1-mingw64
       inputs:
