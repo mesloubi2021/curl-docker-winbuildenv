@@ -1,0 +1,23 @@
+# escape=`
+
+ARG BASE_IMG=mcr.microsoft.com/windows
+ARG BASE_TAG=ltsc2019
+
+FROM ${BASE_IMG}:${BASE_TAG}
+
+SHELL ["powershell", "-command"]
+
+RUN Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart -WarningAction SilentlyContinue;
+
+ARG WSL_UBUNTU="https://aka.ms/wsl-ubuntu-1804"
+
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
+    Invoke-WebRequest $env:WSL_UBUNTU -OutFile C:\Windows\Temp\Ubuntu.zip -UseBasicParsing; `
+    Expand-Archive C:\Windows\Temp\Ubuntu.zip C:\ubuntu; `
+    Remove-Item @('C:\Windows\Temp\*', 'C:\Users\*\Appdata\Local\Temp\*') -Force -Recurse; `
+    Write-Host 'Checking install ...'; `
+    Get-Item -Path 'C:\ubuntu\ubuntu1804.exe';
+
+RUN Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux; `
+    Start-Service LxssManager; `
+    C:\ubuntu\ubuntu1804.exe install --root;
